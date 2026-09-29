@@ -164,6 +164,18 @@ def build():
                   "An Ajera <b>sandbox</b> or test copy, where you can try things without affecting real projects."]],
                 [1.45 * inch, 1.6 * inch, 3.45 * inch]),
           PageBreak()]
+    good_to_know = [
+          callout("Good to know before you start",
+                  [bullets([
+                      "<b>Tested at one firm so far.</b> The tool has been tested end to end against one firm's Ajera "
+                      "sandbox. Every firm sets up Ajera a little differently (several companies, which API "
+                      "permissions are switched on, and so on), so your first run may turn up something new. Try it "
+                      "in your <b>sandbox</b> first. If you see an error, it's safe to forward: messages never "
+                      "include client or staff names.",
+                      "<b>Made for Windows.</b> The double-click menu (<i>Ajera Project Import.bat</i>) only works "
+                      "on Windows. On a Mac, the same steps are run by typing short commands in Terminal. The README "
+                      "lists them, and someone comfortable with Terminal can set it up in a few minutes.",
+                  ])], fill=PALE, edge=NAVY)]
 
     # -- 3 setup ------------------------------------------------------------------------
     menu = ("  ==============================================\n"
@@ -182,7 +194,7 @@ def build():
                                   ("TEXTCOLOR", (0, 0), (-1, -1), colors.white),
                                   ("LEFTPADDING", (0, 0), (-1, -1), 10), ("TOPPADDING", (0, 0), (-1, -1), 8),
                                   ("BOTTOMPADDING", (0, 0), (-1, -1), 8)]))
-    s += [P("3. One-time setup", H1),
+    s += [P("3. One-time setup", H1), *good_to_know,
           steps([
               "Download the tool from GitHub (green <b>Code</b> button, then <b>Download ZIP</b>) and unzip it to a "
               "folder you'll remember, such as <i>Documents\\Ajera Project Import</i>.",
