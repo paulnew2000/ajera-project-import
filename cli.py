@@ -5,6 +5,7 @@ Ajera Project Import - command line.
     python cli.py template [out.xlsx]          blank workbook with YOUR Ajera's names + dropdowns
     python cli.py export --latest 10 [out]     copy existing projects into the import format
     python cli.py export --ids 1001,1002 [out]
+    python cli.py adapt-sample [--client X]    make the Hogwarts sample runnable in YOUR Ajera
     python cli.py check  file.xlsx             validate only - changes nothing in Ajera
     python cli.py create file.xlsx             validate, then create (asks you to type YES)
     python cli.py log                          show projects this tool has created
@@ -66,6 +67,24 @@ def cmd_export(aj: Ajera, a):
                             "Ajera Project Import - export", workbook.today_note() + " (copied from existing Ajera projects)")
     print(f"Export written: {out.resolve()}")
     print("  " + ", ".join(f"{k}={v}" for k, v in stats.items()))
+
+
+def cmd_adapt(aj: Ajera, a):
+    import adapt
+    try:
+        out, summary, problems = adapt.adapt_sample(aj, client=a.client or "", rate_table=a.rate_table or "",
+                                                    prefix=a.prefix, dest=Path(a.out) if a.out else adapt.DEFAULT_OUT)
+    except ValueError as e:
+        print(f"Stopped: {e}")
+        return 1
+    print(f"Sample adapted to your Ajera: {out}")
+    for line in summary:
+        print(f"  {line}")
+    if problems:
+        _print_problems(problems)
+        return 1
+    print("\nCHECK passes. Open the file to look it over, then CREATE it (menu option 4) - ideally in your sandbox.")
+    return 0
 
 
 def _print_problems(problems):
@@ -130,6 +149,11 @@ def main(argv=None):
     e.add_argument("--latest", type=int, default=10, help="newest N active projects (default 10)")
     e.add_argument("--skip", type=int, default=0, help="skip the newest N first")
     e.add_argument("--id-pattern", help="regular expression the project ID must match, e.g. \\d{5}")
+    s = sub.add_parser("adapt-sample", help="make the Hogwarts sample runnable in your Ajera")
+    s.add_argument("out", nargs="?")
+    s.add_argument("--client", help="client name or key to put the sample projects on")
+    s.add_argument("--rate-table", help="rate table name or key (default: newest 'standard' one)")
+    s.add_argument("--prefix", default="HP", help="Job ID prefix (default HP)")
     for name in ("check", "create"):
         s = sub.add_parser(name)
         s.add_argument("file")
@@ -142,7 +166,7 @@ def main(argv=None):
     try:
         aj = Ajera()
         return {"connect": cmd_connect, "template": cmd_template, "export": cmd_export,
-                "check": cmd_check, "create": cmd_create}[a.cmd](aj, a) or 0
+                "adapt-sample": cmd_adapt, "check": cmd_check, "create": cmd_create}[a.cmd](aj, a) or 0
     except RuntimeError as e:
         print(f"Stopped: {e}")
         return 2

@@ -31,6 +31,7 @@ echo   3  CHECK a workbook   (safe - changes nothing)
 echo   4  CREATE projects from a workbook
 echo   5  Show projects this tool has created
 echo   6  Open the settings file (.env)
+echo   7  Make the Hogwarts sample ready for MY Ajera
 echo   Q  Quit
 echo.
 set "choice="
@@ -41,7 +42,19 @@ if /i "%choice%"=="3" set "action=check" & goto withfile
 if /i "%choice%"=="4" set "action=create" & goto withfile
 if /i "%choice%"=="5" python cli.py log & pause & goto menu
 if /i "%choice%"=="6" notepad ".env" & goto menu
+if /i "%choice%"=="7" goto adapt
 if /i "%choice%"=="q" exit /b 0
+goto menu
+
+:adapt
+echo.
+echo  The sample projects need a client that exists in your Ajera - a test or
+echo  placeholder client is best. Type its name or Key (see the Lookups sheet of a
+echo  template, option 2), or just press Enter to let the tool find a test client.
+set "client="
+set /p client="  Client: "
+if defined client (python cli.py adapt-sample --client "%client%") else (python cli.py adapt-sample)
+pause
 goto menu
 
 :withfile

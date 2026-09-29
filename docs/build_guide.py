@@ -175,6 +175,7 @@ def build():
             "   4  CREATE projects from a workbook\n"
             "   5  Show projects this tool has created\n"
             "   6  Open the settings file (.env)\n"
+            "   7  Make the Hogwarts sample ready for MY Ajera\n"
             "   Q  Quit")
     menu_box = Table([[Preformatted(menu, MONO)]], colWidths=[4.6 * inch])
     menu_box.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#0C0C0C")),
@@ -329,10 +330,18 @@ def build():
                  ["HP003", "Test Project: Hagrid", "Hogwarts School of Witchcraft and Wizardry", "Fixed Fee"]],
                 [0.7 * inch, 1.85 * inch, 2.5 * inch, 1.45 * inch]),
           Spacer(1, 6),
-          P("Gringotts and Gryffindor aren't in your Ajera, so <b>CHECK will list those names as not found</b>. "
-            "That's a good way to see the messages. To create the sample projects in your <b>sandbox</b>, change the "
-            "Client, Department, Project Type, Rate Table and Invoice Format columns (and the Department column on "
-            "the Phases sheet) to names from your own template's Lookups sheet, then CHECK and CREATE."),
+          P("Gringotts and Gryffindor aren't in your Ajera, so if you CHECK the sample as it is, those names are "
+            "listed as <i>not found</i>. That's a harmless way to see what the messages look like."),
+          P("Make the sample ready for your Ajera: one menu option", H2),
+          steps(["Ask your administrator which <b>test or placeholder client</b> the practice projects should go on "
+                 "(many firms have one, such as <i>New Client</i> or <i>Test Client</i>).",
+                 "Choose menu option <b>7</b>. Type that client's name, or just press Enter to let the tool look "
+                 "for a client with <i>test</i> or <i>placeholder</i> in its name.",
+                 "The tool saves <b>Hogwarts sample - ready for my Ajera.xlsx</b> and checks it straight away. "
+                 "The Harry Potter project names, notes and phases stay, and the client, departments, project types "
+                 "and rate table are swapped for real ones from your Ajera. Nothing in Ajera is changed.",
+                 "Open the file and look it over. Then use option <b>4 - CREATE</b>, in your <b>sandbox</b>. "
+                 "The Job IDs start at HP001, or continue after any HP numbers you've already used."]),
           P("10. Optional: use it by asking an AI assistant", H1),
           P("If you use Claude Desktop (or another assistant that supports <i>MCP</i> tools), IT can connect this tool "
             "to it using the instructions in the README. You can then just ask:"),

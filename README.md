@@ -93,9 +93,27 @@ A project with no phase rows gets one phase called **General**, because Ajera ne
 
 ## Try the sample
 
-`examples/Hogwarts sample projects.xlsx` holds 10 made-up projects ("Test Project: Dumbledore", …) with 32 phases, and uses Harry Potter clients and departments. It shows the format, but **it won't pass CHECK against a real Ajera** because the names (Gringotts, Gryffindor…) don't exist there. To try it for real, change the Client, Department, Project Type, Rate Table and Invoice Format columns (and the Phases Department column) to names from your template's Lookups sheet.
+`examples/Hogwarts sample projects.xlsx` holds 10 made-up projects ("Test Project: Dumbledore", …) with 32 phases. Its clients, departments, project types and rate tables are made up too (Gringotts, Gryffindor…), so they don't exist in your Ajera.
 
-**A faster way to make realistic test data from your own Ajera:**
+**Make it runnable in your Ajera in one step.** Use menu option **7**, or:
+
+```bash
+python cli.py adapt-sample --client "Your Test Client"
+```
+
+This writes `Hogwarts sample - ready for my Ajera.xlsx` and runs CHECK on it. It reads your Ajera but doesn't change anything. It keeps the Harry Potter descriptions, notes, dates and phases, and fills the rest from your database:
+
+| Column | Filled with |
+|---|---|
+| Client | The client you name (by name or Key). Use a test/placeholder client. Leave `--client` off and it picks the one client whose name looks like *test/sample/placeholder/new client*, if there's exactly one. |
+| Department, Project Type | Your departments and types, spread across the sample's rows. Overhead/marketing-style types are avoided. |
+| Rate Table | `--rate-table` if given, otherwise the newest, plainest one with "standard" in its name (e.g. *2026 Standard*) |
+| Invoice Format, Project Manager, Principal | Left blank (optional) |
+| Job ID | HP001… continuing after any HP numbers already in your Ajera, so it can be run again |
+
+Then CREATE the file (menu option 4), ideally in your sandbox.
+
+**To make realistic test data from your own projects instead:**
 
 ```bash
 python cli.py export --latest 10 my_projects.xlsx
@@ -130,6 +148,7 @@ The server reads the same `.env` file. Its tools:
 |---|---|
 | `check_connection` | Which database am I on, and are writes allowed? |
 | `make_template` | Blank workbook with your Lookups + dropdowns |
+| `adapt_sample` | Make the Hogwarts sample runnable in your Ajera, then CHECK it |
 | `check_workbook` | Validate a workbook. Changes nothing. |
 | `create_projects` | Create the projects. Does nothing unless called with `confirm=true`, which the assistant should only pass after you say yes. |
 | `list_created_projects` | The created-projects log, for clean-up |
@@ -153,6 +172,10 @@ python cli.py export --ids 1001,1002 out.xlsx
 ```
 
 ```bash
+python cli.py adapt-sample --client "Your Test Client"
+```
+
+```bash
 python cli.py check projects.xlsx
 ```
 
@@ -164,7 +187,7 @@ python cli.py create projects.xlsx
 python cli.py log
 ```
 
-`export` also takes `--latest N`, `--skip N` and `--id-pattern REGEX`. `create --yes` skips the typed confirmation (for scripts).
+`adapt-sample` also takes `--rate-table` and `--prefix`. `export` also takes `--latest N`, `--skip N` and `--id-pattern REGEX`. `create --yes` skips the typed confirmation (for scripts).
 
 Tests (offline, no Ajera needed):
 
@@ -207,6 +230,7 @@ Learned the hard way. The code handles all of these:
 | `server.py` | MCP server |
 | `importer.py` | The engine: read workbook → look up → validate → create → verify → log |
 | `workbook.py` | Builds the formatted template/export workbooks |
+| `adapt.py` | Fits the Hogwarts sample to your Ajera (`adapt-sample`) |
 | `ajera_client.py` | Small Ajera API client (sessions v1/v2, write-target check) |
 | `examples/` | Sample workbook and `hogwartsify.py` |
 | `docs/` | The non-technical user guide (PDF) and the script that builds it |

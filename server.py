@@ -59,6 +59,24 @@ def make_template(output_path: str = "Ajera Project Import - template.xlsx") -> 
 
 
 @mcp.tool()
+def adapt_sample(client: str = "", rate_table: str = "", output_path: str = "") -> str:
+    """Make the Hogwarts sample workbook runnable in this Ajera: fills Client / Department / Project Type /
+    Rate Table with valid values from this database (keeps the Harry Potter descriptions and phases) and
+    runs CHECK on the result. Nothing is written to Ajera. `client` is a client name or key - ask the user
+    which test/placeholder client to use; leave blank to auto-pick one whose name looks like a test client."""
+    import adapt
+    try:
+        out, summary, problems = adapt.adapt_sample(aj(), client=client, rate_table=rate_table,
+                                                    dest=Path(output_path) if output_path else adapt.DEFAULT_OUT)
+    except ValueError as e:
+        return f"Not done: {e}"
+    text = f"Workbook: {out}\n" + "\n".join(f"- {s}" for s in summary)
+    if problems:
+        return text + f"\n{len(problems)} CHECK problem(s):\n" + "\n".join(f"- {p}" for p in problems)
+    return text + "\nCHECK passes - ready for create_projects once the user confirms."
+
+
+@mcp.tool()
 def check_workbook(path: str) -> str:
     """Validate an import workbook against Ajera WITHOUT creating anything. Always run this first."""
     projects, problems, _ = importer.check_file(aj(), path)
