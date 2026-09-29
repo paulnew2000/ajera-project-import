@@ -1,0 +1,13 @@
+# Your credentials and your data never go to GitHub
+.env
+private/
+created_projects.csv
+*_results_*.xlsx
+Ajera Project Import - template.xlsx
+Ajera Project Import - export.xlsx
+~$*.xlsx
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
